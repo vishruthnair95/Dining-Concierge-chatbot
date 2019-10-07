@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dining Concierge</title>
+    <link rel="stylesheet" href="style.css">
+    <link id="favicon" rel="icon" href="https://glitch.com/edit/favicon.ico" type="image/x-icon">
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="chat-area">
+        <div id="start-screen">
+          <div id="startButton">
+            <div id="robot">
+              <img src="https://cdn.glitch.com/e5ca6c0c-b21f-4a54-a1ad-6285b1bf8390%2Frobot.svg">
+            </div>
+            <img src="https://cdn.glitch.com/e5ca6c0c-b21f-4a54-a1ad-6285b1bf8390%2Fpointer.png" id="cursor"> or ⏎ to start!
+          </div>
+        </div>
+      </div>
+      <div id="compose-area">
+        <textarea id="composer" class="text-input" type="text" autofocus="autofocus"></textarea>
+        <div id="sendButton">
+          <button>&nbsp;↵&nbsp;</button>
+        </div>
+      </div>
+      
+    </div>
+    <script src="variables.js"></script>
+    <script src="listener.js"></script>
+    <script src="thingsTheBotSays.js"></script>
+    <script src="chatEngine.js"></script>
+    <script src="botChat.js"></script>
+    <script src="userChat.js"></script>
+    <script src="send.js"></script>
+    <script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
+    <script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
+    <script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
+    <script type="text/javascript" src="lib/CryptoJS/components/hmac.js"></script>
+    <script type="text/javascript" src="lib/CryptoJS/components/enc-base64.js"></script>
+    <script type="text/javascript" src="lib/url-template/url-template.js"></script>
+    <script type="text/javascript" src="lib/apiGatewayCore/sigV4Client.js"></script>
+    <script type="text/javascript" src="lib/apiGatewayCore/apiGatewayClient.js"></script>
+    <script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
+    <script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
+    <script type="text/javascript" src="apigClient.js"></script>
+    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+    <script src="https://button.glitch.me/button.js"></script>
+  </body>
+</html>
