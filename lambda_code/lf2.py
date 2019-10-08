@@ -91,28 +91,33 @@ def lambda_handler(event, context):
         print(formatted_query)
         resp = query_es(formatted_query,cuisine)
         
-        rest_data = random.choice(resp["hits"]["hits"])
-        rest_id = rest_data['_source']['id']
-        print(rest_id)
+        msg_text = 'Hi, this is Recommender Bot. The reservation is for a {} restuarant for {} people at {}. We have the following options:\n'.format(cuisine, num_people, dining_time)
+        msg_text_choices = []
+        for choice in range(3):
+            rest_data = random.choice(resp["hits"]["hits"])
+            rest_id = rest_data['_source']['id']
+            print(rest_id)
+            
+            #search dynamodb for corresponding restaurant and get back 
+            dynamodb = boto3.resource('dynamodb', region_name='us-east-2', endpoint_url="http://dynamodb.us-east-2.amazonaws.com")
+            table = dynamodb.Table('restaurant_test')
+            response = table.query(
+                KeyConditionExpression=Key("id").eq(rest_id))
+            
+            print(response["Items"])
+            rest_data = response["Items"][0]
+            r_name = rest_data["name"]
+            r_rating = rest_data["rating"]
+            r_price = rest_data["price"]
+            r_phone = rest_data["phone"]
+            r_address = rest_data["address"]
+            r_num_rating = rest_data["review_count"]
         
-        #search dynamodb for corresponding restaurant and get back 
-        dynamodb = boto3.resource('dynamodb', region_name='us-east-2', endpoint_url="http://dynamodb.us-east-2.amazonaws.com")
-        table = dynamodb.Table('restaurant_test')
-        response = table.query(
-            KeyConditionExpression=Key("id").eq(rest_id))
+            #format text 
+            msg_text_choices.append(str(choice+1) +') Restaurant called {}. The address is {} in {}. It has a {} star rating (on {} ratings) and has a price rating of {}.\n '.format(r_name, r_address, location, r_rating, r_num_rating, r_price))
+            print(msg_text_choices[choice])        
         
-        print(response["Items"])
-        rest_data = response["Items"][0]
-        r_name = rest_data["name"]
-        r_rating = rest_data["rating"]
-        r_price = rest_data["price"]
-        r_phone = rest_data["phone"]
-        r_address = rest_data["address"]
-        r_num_rating = rest_data["review_count"]
-        
-        #format text 
-        msg_text = 'Hi, this is Recommender Bot. We have made a reservation at a {} restaruant called {}. The address is {} in {}. It has a {} star rating (on {} ratings) and has a price rating of {}. The reservation is for {} people at {}.'.format(cuisine, r_name, r_address, location, r_rating, r_num_rating, r_price, num_people, dining_time)
-        print(msg_text)
+        msg_text= msg_text + msg_text_choices[0]+msg_text_choices[1] + msg_text_choices[2]
         
         #send text message
         return_val = send_sns_message(phone_number, msg_text)
