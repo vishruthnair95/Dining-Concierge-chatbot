@@ -28,22 +28,23 @@ function userChat() {
   // sendSpecialChat is an array that will override the next thing the bot says with the second value if the first value is true. If the first value is false the bot will say the next thing in the script.
 
 
-  // Send user's message.
+  // Display user's message.
   send(nextMessage.sender, nextMessage.message);
 
   // Count 1 more chat that the user has sent.
   userCount += 1;
 
   // Push the Message to the Backend
-  var apigClient = apigClientFactory.newClient({
-  accessKey: 'AKIA3EJ6YOU2T2EOC7XE',
-  secretKey: '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',
-});
+  var apigClient = apigClientFactory.newClient();
+  // Random string
+  console.log(userId);
   // Create a request
   body = {
     'data' : nextMessage.message,
-    'count': userCount
+    'count': userCount,
+    'user_id' : userId
   };
+  console.log(body);
   apigClient.chatbotPost({}, body, {})
     .then(function(result){
       console.log(result);

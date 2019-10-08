@@ -13,7 +13,8 @@ var count = 0;
 // botCount and userCount are variables that store how many chats each the bot and the suer have sent.
 var botCount = 0;
 var userCount = 0;
-
+var userId = Math.random().toString(36).substring(7);
+userId = userId + Math.random().toString(36).substring(7);
 // nextMessage is an object variable that stores the next message that will be sent and who will be sending it.
 var nextMessage = {
   message: "",
