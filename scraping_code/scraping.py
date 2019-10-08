@@ -16,9 +16,9 @@ def cat(categories):
 	
 
 
-def exist(a):	
-	if (a):
-		return a
+def exist(a,key):	
+	if key in a.keys() and a[key]:
+		return a[key]
 	else:
 		return " "
 
@@ -34,8 +34,10 @@ if __name__ == "__main__":
 	ct=0
 
 	term = ['Mexican', 'American', 'French', 'Indian', 'Chinese', 'Japanese', 'Thai', 'Korean', 'Spanish', 'Vegan', 'Italian']
-	location = 'NY'
+	#location = 'New York City'
 	SEARCH_LIMIT = 50
+	latitude = 40.776842  #columbia
+	longitude = -73.971096
 	offset = 0
 	url = 'https://api.yelp.com/v3/businesses/search'
 
@@ -45,23 +47,30 @@ if __name__ == "__main__":
 
 	url_params = {
 		                'term': term[0].replace(' ', '+'),
-		                'location': location.replace(' ', '+'),
+		               # 'location': location,#.replace(' ', '+'),
+		                'latitude': latitude,
+		                'longitude':longitude,
+		                'range': 000,
 		                'limit': SEARCH_LIMIT,
 		                'offset': offset
 		            }
 	response = requests.get(url, headers=headers, params=url_params)
 	json_data = json.loads(response.text)
-
+	
 	for i in json_data["businesses"]:
 		total_restaurants[i["id"]] =i
-		
+	
+	
 	
 	for type in term:	
 		for i in range(0,20):
 			offset = 50*i  	
 			url_params = {
 			                'term': type.replace(' ', '+'),
-			                'location': location.replace(' ', '+'),
+			                #'location': location.replace(' ', '+'),
+			                'latitude': latitude,
+			                'longitude':longitude,
+			                'range': 6000,
 			                'limit': SEARCH_LIMIT,
 			                'offset': offset
 			            }
@@ -73,8 +82,8 @@ if __name__ == "__main__":
 				
 				
 
-	#print(json.dumps(json_data["businesses"], indent=4, sort_keys=True))
-	print("as",len(total_restaurants))
+	# #print(json.dumps(json_data["businesses"], indent=4, sort_keys=True))
+	# print("as",len(total_restaurants))
 
 
 
@@ -84,33 +93,38 @@ if __name__ == "__main__":
 	table = dynamodb.Table('restaurant_test')
 	ct=0
 	for i in total_restaurants:
-			print(total_restaurants[i]['location'])
+			
 			table.put_item(
 				Item={
-					"id": exist(total_restaurants[i]['id']),
+
+					"id": exist(total_restaurants[i],'id'),
 
 					# string, the business's name
-					"name": exist(total_restaurants[i]['name']),
+					"name": exist(total_restaurants[i],'name'),
 	
 					# # string, the full address of the business
-					"address": exist(total_restaurants[i]['location']['address1']),
+					"address": exist(total_restaurants[i]['location'],'address1'),
 
 					# # string, the city
-					"city": exist(total_restaurants[i]['location']['city']),
+					"city": exist(total_restaurants[i]['location'],'city'),
 
 					# string, 2 character state code, if applicable
-					"state": exist(total_restaurants[i]['location']['state']) ,
+					"state": exist(total_restaurants[i]['location'],'state') ,
 
 					# string, the postal code
-					"zip_code": exist(total_restaurants[i]['location']['zip_code']),
+					"zip_code": exist(total_restaurants[i]['location'],'zip_code'),
 	
 
 					# float, star rating, rounded to half-stars
-					"rating": exist(Decimal(total_restaurants[i]['rating'])),
+					"rating": Decimal(exist(total_restaurants[i],'rating')),
 
+					
 					# integer, 0 or 1 for closed or open, respectively
-					"is_closed": exist(total_restaurants[i]['is_closed']),
+					"review_count": exist(total_restaurants[i],'review_count'),
 
+					"price": exist(total_restaurants[i],'price'),
+
+					"phone": exist(total_restaurants[i],'phone'),
 					#an array of strings of business categories
 					"categories": cat(total_restaurants[i]['categories']),
 
